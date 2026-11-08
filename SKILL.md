@@ -127,13 +127,21 @@ description: 旁白类科教/纪录片视频的导演流程：从文案到成片
 
 ## 文件约定
 
+项目有自己的目录规范时，以项目规范为准；没有时按下面的结构：
+
 ```
-production/episode-NN/
-  SCRIPT.md  STORYBOARD.md  SOURCES.md  REVIEW-LOG.md  LESSONS.md
-  frames/       SHOT-ID_first_v1.png  SHOT-ID_last_v1.png
-  seedance/     SHOT-ID_v1.mp4  tasks.jsonl（任务、参数、花费）
-  remotion/  compositions/  renders/
+production/
+  series/                    全系列共享：风格板、模板、片尾、三维资产、人物登记
+  episode-NN/
+    SCRIPT.md  STORYBOARD.md  SOURCES.md  REVIEW-LOG.md  LESSONS.md  PERFORMANCE.md
+    voice/                   配音与字符时间戳
+    frames/                  <镜号>_first_v1.png  <镜号>_last_v1.png
+    video/                   budget.json  tasks.jsonl  seedance/  wan/  veo/  muapi/
+    remotion/  compositions/  audio/  renders/  qa/
+output/第NN集/               成片、字幕、封面、章节、来源与许可、发布文案
 ```
+
+方案文件（总导演写的脚本、设定）放在单独的方案目录，制作代理只读不写；需要改脚本时复制到本集 `SCRIPT.md` 再改，并在 REVIEW-LOG 记录。
 
 ## 参考文件
 

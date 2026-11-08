@@ -6,7 +6,7 @@ Standard library only. Reads the key from ARK_API_KEY and never prints it.
 Usage:
   python seedance_task.py estimate --model mini --resolution 720p --duration 7
   python seedance_task.py submit --shot 04-02 --prompt-file p.txt --first f.png --last l.png \
-      --duration 7 --out production/episode-02-v3/seedance --budget production/episode-02-v3/seedance/budget.json
+      --duration 7 --out production/episode-02-v3/video/seedance --budget production/episode-02-v3/video/budget.json
   python seedance_task.py batch jobs.jsonl --out ... --budget ... [--workers 3]
 
 budget.json (written by the user or the proxy agent after the user approves):
