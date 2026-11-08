@@ -182,7 +182,7 @@ function board() {
 }
 
 /* ---------------- 12-episode ledger (总账) ---------------- */
-function closeout(id) {
+function closeout(id, recordedBy = 'Codex') {
   const r = stateOf(id, null);
   if (r.state !== '已完成' || !r.approval) die('没有对应最新回执的明确批准，或尚有返工/未裁决提问，不能写收口文件。');
   const a = r.approval;
@@ -190,7 +190,7 @@ function closeout(id) {
   const receipt = {project: PROJECT, work_order_id: id, report_round: a.report_round,
     approved_by: a.by, approved_by_label: a.label, approval_artifact: a.artifact, approval_sha256: a.artifact_sha256,
     report_artifact: `report-r${a.report_round}.json`, report_sha256: a.report_sha256,
-    recorded_by: 'Codex', recorded_at: now(), summary: `${a.label}明确批准对应回执；Codex据批准记录收口，不是Codex自批。`};
+    recorded_by: recordedBy, recorded_at: now(), summary: `${a.label}明确批准对应回执；${recordedBy}据批准记录收口，不是执行方自批。`};
   if (fs.existsSync(file)) die('收口回执已存在，先核对原记录，不覆盖。');
   writeJson(file, receipt);
   console.log(`已写 ${path.relative(ROOT, file)}；批准者：${a.label}`);
@@ -405,7 +405,8 @@ switch (cmd) {
     console.log('已生成', path.join(COLLAB, 'LEDGER.md'));
     break;
   case 'closeout':
-    closeout(a[0]);
+    // closeout <工单号> [--by=Claude]：执行代理不可用时由总导演代为记录
+    closeout(a[0], (a.find((x) => x.startsWith('--by=')) || '--by=Codex').slice(5));
     break;
   case 'stage':
     // stage EP02 voice doing "说明" --by=Codex --wo=WO-...   或   stage S1 - done "说明"

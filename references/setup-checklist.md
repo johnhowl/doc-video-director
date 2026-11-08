@@ -44,7 +44,7 @@
 
 | 服务 | 变量 | 何时需要 | 核验 |
 |---|---|---|---|
-| 通义万相（阿里云百炼 DashScope） | `DASHSCOPE_API_KEY` | 云端第 1 档；新号有免费额度 | 查询可用模型或提交 1 条最短任务 |
+| 通义万相（阿里云百炼 DashScope） | `DASHSCOPE_API_KEY` | 云端第 1 档；新号有免费额度 | 视频型号不在 `/compatible-mode/v1/models` 列表里。用明显不合法的参数（分辨率 `1x1`、时长 999）提交：异步接口会先返回 task_id，再在 1 秒内转为 FAILED（InvalidParameter），usage 为空、不计费，能走到这一步就说明有权限。不要用接近合法的参数，以免真的生成 |
 | Google Gemini / Veo | `GEMINI_API_KEY`（代理时加 `GOOGLE_GEMINI_BASE_URL`） | 备选 | 列出可调用的视频型号 |
 | 火山方舟 Seedance | `ARK_API_KEY` | 人物表演类镜头升档；开通需实名、余额门槛 | 查询任务列表或最短任务 |
 | muapi | `MUAPI_API_KEY` | 比价与补位 | 账户信息接口 |

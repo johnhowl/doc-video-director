@@ -11,7 +11,7 @@
     "approval_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "report_artifact": {"type": "string"},
     "report_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "recorded_by": {"type": "string", "const": "Codex"},
+    "recorded_by": {"type": "string", "enum": ["Codex", "Claude"], "description": "通常为执行代理；其不可用时由总导演代为记录"},
     "recorded_at": {"type": "string"},
     "summary": {"type": "string"}
   }
