@@ -25,7 +25,7 @@ description: 旁白类科教/纪录片视频的导演流程：从文案到成片
 | 导演（主做） | 当前会话的主代理（Codex 或 Claude Code） | 分镜、提示词、代码、调度；不替用户批准花钱 |
 | 画师 | GPT 内置 image_gen（Codex 的 imagegen skill） | 风格板、分镜草图、**无人脸**的首尾帧、透明分层 |
 | 人像画师 | 火山方舟 Seedream 5.0（同一账号） | **含人脸**的首帧（同账号 30 天内原始产物才被 Seedance 信任） |
-| 摄影机 | 按成本阶梯选：通义万相、Veo、Seedance、muapi 等（见 `references/fallback-engines.md`） | 写实视频片段 |
+| 摄影机 | 按成本阶梯选：本地开源模型（ComfyUI，第 0 档，见 `references/local-comfyui.md`）、通义万相、Veo、Seedance、muapi 等（见 `references/fallback-engines.md`） | 写实视频片段 |
 | 动画师 | 导演写代码：Remotion + React Three Fiber、HyperFrames | 科学机制、字卡、地图、图表、转场 |
 | 配音 | TTS（如 ElevenLabs），用 PROJECT.md 里已批准的声音与参数 | 旁白 + 字符时间戳 |
 | 审核 | 子代理，`references/agents.md#审核` | 只找错、不改文件；每个关口给“通过/不通过” |
@@ -44,7 +44,7 @@ description: 旁白类科教/纪录片视频的导演流程：从文案到成片
 |---|---|---|
 | **演示幻灯片** | 标题、地图、图表、清单、证据卡、三件事卡、免责声明、片尾 | HyperFrames。按场景设计不同风格，与前后画面基调衔接，不全片一个模板、一种底色 |
 | **动画** | DNA 修复、自噬、线粒体、器官、肌肉透视、信号通路、网络图、显微氛围 | Remotion + React Three Fiber 代码优先。代码确实难以实现的（如电影感的显微氛围、复杂流体），可用视频生成；需要精确结构的必须用代码 |
-| **现实视频** | 人物与生活情境、动作示范、比喻实物（鞋带头、书签、花园）、环境空镜、手部特写 | 视频生成，按成本阶梯从最便宜的引擎试起，过审即用（见 `references/fallback-engines.md`）。首帧用 GPT 出图；用 Seedance 时有人脸的首帧走文生视频、Seedream 或预置虚拟人像 |
+| **现实视频** | 人物与生活情境、动作示范、比喻实物（鞋带头、书签、花园）、环境空镜、手部特写 | 视频生成，按成本阶梯从最便宜的引擎试起，过审即用（见 `references/fallback-engines.md`）；空镜、比喻实物、缓慢运动和打样可先用本地模型（见 `references/local-comfyui.md`）。首帧用 GPT 出图；用 Seedance 时有人脸的首帧走文生视频、Seedream 或预置虚拟人像 |
 
 动作示范用现实视频里的真人示范者，需要讲清发力部位时叠加三维肌肉动画；不用木头人偶或低模人体。
 
@@ -123,6 +123,7 @@ description: 旁白类科教/纪录片视频的导演流程：从文案到成片
 - 新版本另存为新文件，不覆盖、不删除旧版本。
 - 不替用户充值、购买资源包或额度。额度用完就停下，用已有素材先剪一版粗剪。
 - 不打印、不写入任何 API Key；从环境变量读取。
+- 本地模型下载：先评估显存、速度与下载量，用户确认后再下载；不先下大模型再发现跑不动。
 - 说清楚自己检查不了什么（动作是否自然、声音好不好），交给用户判断。
 
 ## 文件约定
@@ -148,5 +149,7 @@ output/第NN集/               成片、字幕、封面、章节、来源与许�
 - `references/templates.md`：分镜表、图像提示词、视频提示词、文案自查表
 - `references/agents.md`：审核、监督、用户代理、首映观众的完整指令
 - `references/seedance.md`：开通方法、模型与价格、人脸规则、接口参数
-- `references/fallback-engines.md`：视频引擎成本阶梯（通义万相、Veo、Seedance、muapi）、升档与切换条件、接入要点
+- `references/fallback-engines.md`：视频引擎成本阶梯（本地、通义万相、Veo、Seedance、muapi）、升档与切换条件、接入要点
+- `references/local-comfyui.md`：本地模型 + ComfyUI 的使用场景、按显存选型、先评估再下载、完整安装命令、校验与实测、批量调用
 - `scripts/seedance_task.py`：提交任务、轮询、下载、记账（带预算闸门）
+- `scripts/comfy_queue.py`：向本地 ComfyUI 提交工作流、等待、下载结果、记账
