@@ -3,7 +3,7 @@
 一个给 **Codex** 和 **Claude Code** 用的 skill：把一份文案做成一部旁白类科教片或纪录片。
 
 - **GPT 图像**出风格板、分镜草图和无人脸的首尾帧
-- **Seedance（火山方舟）**生成写实视频片段；有人脸的镜头走 Seedream 首帧、文生视频或官方虚拟人像；Seedance 不可用或多次生成不理想时，换通义万相、Veo 或 muapi
+- **视频生成按成本阶梯**：通义万相、Veo、Seedance（火山方舟）、muapi 等，从最便宜的试起，过审即用；Seedance 的人脸限制另有合规做法
 - **Remotion / HyperFrames** 写代码做需要精确的科学机制动画、字卡、地图和图表
 - **TTS**（如 ElevenLabs）配音并对齐字幕
 - 四个子代理分阶段把关：**审核**（只找错）、**监督**（核对用户要求）、**用户代理**（预算内做常规决定）、**首映观众**（像第一次看的人一样复述和挑刺）
@@ -50,7 +50,7 @@ SKILL.md                    流程、角色、镜头分流、八个阶段与关�
 references/templates.md     文案自查表、分镜表、七段式图像/视频提示词、三维镜头说明、PROJECT.md 模板
 references/agents.md        审核、监督、用户代理、首映观众四个子代理的指令
 references/seedance.md      开通方法、模型与价格、人脸规则、接口要点、常见报错
-references/fallback-engines.md  备用引擎（通义万相、Veo、muapi）与切换条件
+references/fallback-engines.md  视频引擎成本阶梯、升档与切换条件、接入要点
 scripts/seedance_task.py    Seedance 任务脚本（预算闸门 + 并发≤3 + 记账）
 ```
 

@@ -25,7 +25,7 @@ description: 旁白类科教/纪录片视频的导演流程：从文案到成片
 | 导演（主做） | 当前会话的主代理（Codex 或 Claude Code） | 分镜、提示词、代码、调度；不替用户批准花钱 |
 | 画师 | GPT 内置 image_gen（Codex 的 imagegen skill） | 风格板、分镜草图、**无人脸**的首尾帧、透明分层 |
 | 人像画师 | 火山方舟 Seedream 5.0（同一账号） | **含人脸**的首帧（同账号 30 天内原始产物才被 Seedance 信任） |
-| 摄影机 | 火山方舟 Seedance 2.0 / 2.0 Mini / 2.5；备用：通义万相、Veo、muapi（见 `references/fallback-engines.md`） | 写实视频片段 |
+| 摄影机 | 按成本阶梯选：通义万相、Veo、Seedance、muapi 等（见 `references/fallback-engines.md`） | 写实视频片段 |
 | 动画师 | 导演写代码：Remotion + React Three Fiber、HyperFrames | 科学机制、字卡、地图、图表、转场 |
 | 配音 | TTS（如 ElevenLabs），用 PROJECT.md 里已批准的声音与参数 | 旁白 + 字符时间戳 |
 | 审核 | 子代理，`references/agents.md#审核` | 只找错、不改文件；每个关口给“通过/不通过” |
@@ -44,13 +44,13 @@ description: 旁白类科教/纪录片视频的导演流程：从文案到成片
 |---|---|---|
 | **演示幻灯片** | 标题、地图、图表、清单、证据卡、三件事卡、免责声明、片尾 | HyperFrames。按场景设计不同风格，与前后画面基调衔接，不全片一个模板、一种底色 |
 | **动画** | DNA 修复、自噬、线粒体、器官、肌肉透视、信号通路、网络图、显微氛围 | Remotion + React Three Fiber 代码优先。代码确实难以实现的（如电影感的显微氛围、复杂流体），可用视频生成；需要精确结构的必须用代码 |
-| **现实视频** | 人物与生活情境、动作示范、比喻实物（鞋带头、书签、花园）、环境空镜、手部特写 | 视频生成：Seedance 首选，备用通义万相、Veo、muapi。无脸镜头用 GPT 首尾帧；有人脸走文生视频、Seedream 首帧或预置虚拟人像 |
+| **现实视频** | 人物与生活情境、动作示范、比喻实物（鞋带头、书签、花园）、环境空镜、手部特写 | 视频生成，按成本阶梯从最便宜的引擎试起，过审即用（见 `references/fallback-engines.md`）。首帧用 GPT 出图；用 Seedance 时有人脸的首帧走文生视频、Seedream 或预置虚拟人像 |
 
 动作示范用现实视频里的真人示范者，需要讲清发力部位时叠加三维肌肉动画；不用木头人偶或低模人体。
 
 **身体与着装（硬性规定）**：示范人物和一切写实人物衣着完整，任何情况下不出现裸露身体、生殖器等隐私部位，也不出现贴身内衣式的近景。表现身体内部可以用解剖模型（肌肉、骨骼、器官），但解剖模型去掉外生殖器，从体表到内部的过渡不经过裸露皮肤。
 
-**人脸限制（重要）**：Seedance 2.0/2.5 拒绝任何含写实人脸的首帧或参考图，GPT 生成的人像同样会被拦（报错 `InputImageSensitiveContentDetected.PrivacyInformation`，不计费）。不要试图绕过。合规路线见 `references/seedance.md#人脸`。
+**人脸限制（只针对 Seedance）**：Seedance 2.0/2.5 拒绝任何含写实人脸的首帧或参考图，GPT 生成的人像同样会被拦（报错 `InputImageSensitiveContentDetected.PrivacyInformation`，不计费）。不要试图绕过。合规路线见 `references/seedance.md#人脸`。
 
 ## 八个阶段与关口
 
@@ -94,11 +94,11 @@ description: 旁白类科教/纪录片视频的导演流程：从文案到成片
 
 ### 6. 视频生成
 - 提示词用七段式，模板见 `references/templates.md#视频提示词`；中文提示词可配合 `seedance-prompt-zh` skill 润色。
-- 先做一两个最难的镜头。成功了就直接用作正片，不另做“测试片”；没问题再批量提交。
-- 默认 720p + Seedance 2.0 Mini；复杂运动、人物表演才用 2.0 或 2.5；后期放大到 1080p。
-- 个人账号并发上限 3：用 `scripts/seedance_task.py` 排队提交，记录每条任务。
+- 先做一两个最难的镜头，在两三个便宜引擎上各生成一次对比，选过审的最便宜者作为本集默认引擎；成功的直接用作正片，不另做“测试片”。
+- 默认 720p、无声；按成本阶梯从第 1 档试起，同一镜头两次不过审核再升档；后期放大到 1080p。
+- 各引擎的并发与限流不同（Seedance 个人账号并发 3）；Seedance 用 `scripts/seedance_task.py`，其他引擎按 `references/fallback-engines.md` 的接入要点调用，统一记入 `video/tasks.jsonl`。
 - **关口**：每次提交前，审核写“通过”，并且花费在用户批准的预算内（用户代理可在预算内放行，超出就停下等用户）。
-- 生成失败时依次尝试：剪掉开头或结尾的坏帧 → 用代码修 → 改提示词或首尾帧后只重拍这一镜 → 同一镜头三次仍不合格，或 Seedance 拒绝且无合规替代时，按 `references/fallback-engines.md` 换备用引擎。旧的保留，最后从所有版本里挑最好的。
+- 生成失败时依次尝试：剪掉开头或结尾的坏帧 → 用代码修 → 改提示词或首尾帧后只重拍这一镜 → 同一镜头在当前档两次仍不合格、或引擎拒绝输入时，按 `references/fallback-engines.md` 升档或换引擎。旧的保留，最后从所有版本里挑最好的。
 - 生成的视频地址只保留 24 小时，立刻下载入库。
 
 ### 7. 剪辑、调色与合成
@@ -148,5 +148,5 @@ output/第NN集/               成片、字幕、封面、章节、来源与许�
 - `references/templates.md`：分镜表、图像提示词、视频提示词、文案自查表
 - `references/agents.md`：审核、监督、用户代理、首映观众的完整指令
 - `references/seedance.md`：开通方法、模型与价格、人脸规则、接口参数
-- `references/fallback-engines.md`：通义万相、Veo、muapi 备用引擎及切换条件
+- `references/fallback-engines.md`：视频引擎成本阶梯（通义万相、Veo、Seedance、muapi）、升档与切换条件、接入要点
 - `scripts/seedance_task.py`：提交任务、轮询、下载、记账（带预算闸门）

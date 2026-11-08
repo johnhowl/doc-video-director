@@ -1,27 +1,43 @@
-# 备用视频引擎
+# 视频引擎与成本阶梯
 
-Seedance 是首选，不是唯一选择。遇到下面任一情况，换备用引擎生成**这一个镜头**，其余镜头不动：
+原则：**同一个镜头，从最便宜的可用引擎开始试；过了审核就用，不过再升一档。** 旁白类片子一律选“无声”计费（声音后期统一配），能省一半左右。
 
-1. Seedance 拒绝输入（人脸、内容审核），且没有合规的替代路线（无脸构图、文生视频、Seedream 首帧、虚拟人像都不适用）；
-2. 同一镜头连续三次生成仍未通过审核（动作变形、穿帮、偏色、效果差，俗称“抽卡不行”）；
-3. 火山方舟余额不足、限流、故障，或接口长时间无响应；
-4. 某类画面 Seedance 明显不擅长，而备用引擎更合适（先用一个镜头对比验证）。
+## 成本阶梯（2026-11 公开原价，720p，每秒；美元按约 7.1 元折算；以控制台实际计费为准）
 
-切换前由用户代理确认仍在预算内；每次切换写进 REVIEW-LOG（原因、引擎、模型、花费）。
-
-## 候选引擎（2026-11 状态，用前核对文档与价格）
-
-| 引擎 | 接入 | 凭证（环境变量） | 特点 | 注意 |
+| 档 | 引擎 / 型号 | 每秒 | 适合 | 备注 |
 |---|---|---|---|---|
-| 通义万相 Wan（阿里云百炼 / DashScope） | DashScope 视频生成接口（文生视频、图生视频、首尾帧） | `DASHSCOPE_API_KEY` | 中文提示理解好；写实人物常用作 Seedance 人脸受限时的替代 | 用最新 wan 视频模型，先查模型名、分辨率、时长与单价；输出仍过平台内容审核 |
-| Google Veo 3.1（Gemini API） | `models/veo-3.1-*:predictLongRunning` 一类长任务接口 | `GEMINI_API_KEY`（如有代理还需 `GOOGLE_GEMINI_BASE_URL`） | 画质与物理运动强；有 Lite / Fast / 标准多档 | 先确认所用地址支持视频生成；人物生成受 `personGeneration` 等策略限制；美元计费 |
-| muapi（聚合平台） | Codex 已装 `muapi-seedance-2` skill；平台还提供 Kling 等模型 | `MUAPI_API_KEY` | 火山账号出问题时仍可调用 Seedance；可试其他模型 | 第三方平台，按其价格与条款；没有 key 时向用户要，不自行注册付费 |
+| 1 | 通义万相 `wan2.6-i2v-flash` 无声 | ¥0.15（1080p ¥0.25） | 大多数现实视频镜头 | 阿里云百炼（北京）；有声版 ¥0.3；首帧生视频 |
+| 2 | Veo 3.1 Lite 无声（Google Cloud） | $0.03 ≈ ¥0.21 | 备选 | Cloud 上为预览版，需 Google Cloud 账号；有声 $0.05 |
+| 3 | Seedance 2.0 Mini | 约 ¥0.5 | 万相不过审时 | 火山方舟；不接受写实人脸首帧 |
+| 4 | 通义万相 `wan2.6-i2v` / `wan2.6-t2v` | ¥0.6（1080p ¥1.0） | 动作更复杂的镜头 | 新号开通 90 天内各有 50 秒免费额度 |
+| 4 | 通义万相 `wan2.7-i2v`、`wan3.0-video` | 查控制台 | 首尾帧、续写、更长时长 | wan3.0 最长 30 秒，可关声音；`wan3.0-video-prime` 为快速版 |
+| 5 | Veo 3.1 Fast | 无声 $0.08 ≈ ¥0.57；有声 $0.10 ≈ ¥0.71 | 写实运动要求高 | Google Cloud 正式版；Gemini API 上改用 Gemini Omni Flash |
+| 5 | Gemini Omni Flash（Gemini API） | 约 $0.10 ≈ ¥0.72 | 同上 | Gemini API 上 Veo 3.1 预览版的替代，声音默认开启 |
+| 6 | Seedance 2.0 Fast / 2.0 | 约 ¥0.8 / ¥1.0（1080p 约 ¥2.5） | 人物表演、最难的镜头 | |
+| 7 | Veo 3.1 标准 | 无声 $0.20 ≈ ¥1.4；有声 $0.40 ≈ ¥2.8 | 一般不用 | |
 
-OpenAI Sora 2 接口已于 2026-09-24 关闭，不再列入。
+**muapi（聚合平台）**：一个 key 调用很多模型，适合比价和临时补位。部分老型号或轻量型号很便宜（如 Hailuo 02 标准、LTX、Vidu Q2 Turbo、Veo 3.1 Lite 等），但 Seedance 2 在 muapi 上比火山方舟直连贵。价格单位有按秒、有按条，用前在 muapi 页面核对；需要用户提供 `MUAPI_API_KEY`。
+
+**估算**：一集约 4 分钟现实视频，按 1.5 倍重拍余量生成约 360 秒：全用万相 Flash 无声约 ¥54；全用 Seedance Mini 约 ¥180；全用 Seedance 2.0 约 ¥360。实际按阶梯混用，多数镜头在第 1 档解决。
+
+## 什么时候升档或换引擎
+
+1. 同一镜头在当前档生成两次仍不过审核（动作变形、穿帮、脸部异常、质感差）→ 升一档。
+2. 引擎拒绝输入（人脸、内容审核）→ 换引擎，不绕过审核。万相、Veo 对 AI 生成的写实人像首帧通常可以直接用；Seedance 需走文生视频、Seedream 首帧或虚拟人像（见 `seedance.md`）。
+3. 账号余额不足、限流、故障 → 换同档或相邻档的其他引擎。
+4. 每次升档或换引擎，由用户代理确认仍在预算内，并记入 REVIEW-LOG（原因、引擎、型号、花费）。
+
+## 接入要点（以各家文档为准）
+
+- **通义万相（阿里云百炼 DashScope）**：环境变量 `DASHSCOPE_API_KEY`。异步任务：`POST https://dashscope.aliyuncs.com/api/v1/services/aigc/video-generation/video-synthesis`（请求头 `X-DashScope-Async: enable`），再轮询 `GET https://dashscope.aliyuncs.com/api/v1/tasks/{task_id}`。参数里设分辨率、时长、是否生成声音；首帧用图片地址或 base64。
+- **Google**：Gemini API（`GEMINI_API_KEY`，有代理需 `GOOGLE_GEMINI_BASE_URL`）现在可用 Gemini Omni Flash；Veo 3.1 正式版（`veo-3.1-generate-001`、`veo-3.1-fast-generate-001`）与 Lite 在 Google Cloud（Gemini Enterprise Agent Platform），标注最早 2026-11-17 下线。Veo 时长固定 4/6/8 秒，1080p 只有 8 秒；人物生成受 `personGeneration` 策略限制。Google Flow 网页版按积分计费更便宜，但只能手动操作。
+- **Seedance（火山方舟）**：见 `seedance.md` 与 `scripts/seedance_task.py`。
+- **muapi**：Codex 已装 `muapi-seedance-2` skill，其他模型按 muapi 文档调用。
+- OpenAI Sora 2 接口已于 2026-09-24 关闭，不再列入。
 
 ## 保持一致
 
-- 用同一份七段式提示词和同一对首尾帧（按引擎要求调整格式与时长），不另起炉灶。
-- 生成后按相邻镜头校色，分辨率统一放大到成片规格。
-- `tasks.jsonl` 里记录 `engine` 字段；片尾 AI 生成声明按**实际用到**的引擎写。
-- 同一场景尽量不混用引擎，避免同一段落里画风跳变。
+- 用同一份七段式提示词和同一对首尾帧（按引擎要求调整格式与时长）。
+- 生成后按相邻镜头校色，分辨率统一放大到成片规格；不同引擎的帧率统一转换到成片帧率。
+- `video/tasks.jsonl` 记录 `engine`、`model`、`audio`、`resolution`、花费；片尾 AI 生成声明按实际用到的引擎写。
+- 同一场景尽量用同一引擎，避免同一段落画风跳变。
