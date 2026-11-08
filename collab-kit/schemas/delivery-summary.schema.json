@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "一集交付总结",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project",
+    "episode",
+    "outcome",
+    "deliverables",
+    "verification",
+    "spend_total_cny",
+    "residual_risks",
+    "user_actions_needed",
+    "lessons"
+  ],
+  "properties": {
+    "project": {
+      "type": "string",
+      "const": "{{PROJECT}}"
+    },
+    "episode": {
+      "type": "string",
+      "enum": [
+        "SERIES",
+        "EP01",
+        "EP02",
+        "EP03",
+        "EP04",
+        "EP05",
+        "EP06",
+        "EP07",
+        "EP08",
+        "EP09",
+        "EP10",
+        "EP11",
+        "EP12"
+      ]
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "partial",
+        "blocked"
+      ]
+    },
+    "deliverables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "description"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "check",
+          "result"
+        ],
+        "properties": {
+          "check": {
+            "type": "string"
+          },
+          "command": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "skip"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "spend_total_cny": {
+      "type": "number",
+      "minimum": 0
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "wall_hours": {
+          "type": "number"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "user_actions_needed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lessons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

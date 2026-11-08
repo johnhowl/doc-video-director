@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "试验（引擎、参数、画质对比）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project",
+    "work_order_id",
+    "topic",
+    "hypothesis",
+    "setup",
+    "procedure",
+    "metrics",
+    "results",
+    "conclusion"
+  ],
+  "properties": {
+    "project": {
+      "type": "string",
+      "const": "{{PROJECT}}"
+    },
+    "work_order_id": {
+      "type": "string",
+      "pattern": "^WO-[0-9]{8}-[0-9]{3}$"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "hypothesis": {
+      "type": "string"
+    },
+    "setup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shots",
+        "engines"
+      ],
+      "properties": {
+        "shots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "engines": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "hyperframes",
+              "remotion",
+              "ffmpeg",
+              "comfyui-local",
+              "wan-cloud",
+              "veo",
+              "seedance",
+              "muapi",
+              "elevenlabs",
+              "gpt-image",
+              "seedream",
+              "local-image",
+              "python",
+              "node",
+              "manual-user",
+              "other"
+            ]
+          }
+        },
+        "conditions": {
+          "type": "string",
+          "description": "分辨率、帧数、步数、提示词版本、硬件"
+        }
+      }
+    },
+    "procedure": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "definition"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "definition": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "metric",
+          "value",
+          "confidence"
+        ],
+        "properties": {
+          "metric": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "conclusion": {
+      "type": "string"
+    },
+    "next_experiments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

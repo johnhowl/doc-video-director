@@ -1,0 +1,271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "工单（Claude → Codex）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project",
+    "id",
+    "title",
+    "episode",
+    "stage",
+    "objective",
+    "inputs",
+    "steps",
+    "shots",
+    "outputs",
+    "acceptance",
+    "gates",
+    "budget_cny",
+    "depends_on",
+    "forbidden"
+  ],
+  "properties": {
+    "project": {
+      "type": "string",
+      "const": "{{PROJECT}}"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^WO-[0-9]{8}-[0-9]{3}$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "episode": {
+      "type": "string",
+      "enum": [
+        "SERIES",
+        "EP01",
+        "EP02",
+        "EP03",
+        "EP04",
+        "EP05",
+        "EP06",
+        "EP07",
+        "EP08",
+        "EP09",
+        "EP10",
+        "EP11",
+        "EP12"
+      ]
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "setup",
+        "cleanup",
+        "script",
+        "voice",
+        "storyboard",
+        "assets",
+        "slides",
+        "animation",
+        "real-video",
+        "edit",
+        "qa",
+        "delivery",
+        "experiment",
+        "research"
+      ]
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "high",
+        "normal",
+        "low"
+      ]
+    },
+    "objective": {
+      "type": "string",
+      "description": "一句话：这张工单要达成什么"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "purpose"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "必读的方案文件、设计稿、代码、素材"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "按顺序执行的步骤"
+    },
+    "shots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "shot_id",
+          "category",
+          "engine",
+          "spec_ref"
+        ],
+        "properties": {
+          "shot_id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "slides",
+              "animation",
+              "real-video",
+              "voice",
+              "edit",
+              "asset",
+              "none"
+            ]
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "hyperframes",
+              "remotion",
+              "ffmpeg",
+              "comfyui-local",
+              "wan-cloud",
+              "veo",
+              "seedance",
+              "muapi",
+              "elevenlabs",
+              "gpt-image",
+              "seedream",
+              "local-image",
+              "python",
+              "node",
+              "manual-user",
+              "other"
+            ]
+          },
+          "spec_ref": {
+            "type": "string",
+            "description": "设计稿中的位置，如 Claude总导演/设计稿/EP02-DESIGN.md#04-02"
+          },
+          "fallback_engine": {
+            "type": "string",
+            "enum": [
+              "hyperframes",
+              "remotion",
+              "ffmpeg",
+              "comfyui-local",
+              "wan-cloud",
+              "veo",
+              "seedance",
+              "muapi",
+              "elevenlabs",
+              "gpt-image",
+              "seedream",
+              "local-image",
+              "python",
+              "node",
+              "manual-user",
+              "other"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "本工单涉及的镜头；不涉及镜头时为空数组"
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "description"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "acceptance": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "Codex 自检与 Claude 评审共用的验收条件"
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "description"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "user-approval",
+              "budget",
+              "download",
+              "style",
+              "sample-review",
+              "safety"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "必须停下等用户或 Claude 的关口"
+    },
+    "budget_cny": {
+      "type": "number",
+      "minimum": 0,
+      "description": "本工单付费生成上限；0 表示不得产生费用"
+    },
+    "depends_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^WO-[0-9]{8}-[0-9]{3}$"
+      }
+    },
+    "forbidden": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "明确禁止的操作"
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "评审（Claude → Codex）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project",
+    "work_order_id",
+    "round",
+    "verdict",
+    "summary",
+    "findings",
+    "required_fixes",
+    "approved_outputs",
+    "user_decisions_needed"
+  ],
+  "properties": {
+    "project": {
+      "type": "string",
+      "const": "{{PROJECT}}"
+    },
+    "work_order_id": {
+      "type": "string",
+      "pattern": "^WO-[0-9]{8}-[0-9]{3}$"
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "pass_with_notes",
+        "revise",
+        "fail"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "shot_id",
+          "severity",
+          "issue"
+        ],
+        "properties": {
+          "shot_id": {
+            "type": "string",
+            "description": "镜号，或 'whole' 表示整体"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "blocker",
+              "major",
+              "minor",
+              "note"
+            ]
+          },
+          "at": {
+            "type": "string",
+            "description": "时间码或帧号"
+          },
+          "issue": {
+            "type": "string"
+          },
+          "rule_ref": {
+            "type": "string",
+            "description": "依据的规则，如 PROJECT.md 着装规则"
+          }
+        }
+      }
+    },
+    "required_fixes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "shot_id",
+          "action",
+          "instruction"
+        ],
+        "properties": {
+          "shot_id": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "fix",
+              "regenerate",
+              "reroute-cloud",
+              "reroute-video-gen",
+              "recode-animation",
+              "redo-slide",
+              "re-voice",
+              "re-edit",
+              "user-decision"
+            ]
+          },
+          "instruction": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "approved_outputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "user_decisions_needed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

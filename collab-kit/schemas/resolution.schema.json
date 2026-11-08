@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "裁决（Claude → Codex）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project",
+    "work_order_id",
+    "round",
+    "aligned",
+    "resolutions"
+  ],
+  "properties": {
+    "project": {
+      "type": "string",
+      "const": "{{PROJECT}}"
+    },
+    "work_order_id": {
+      "type": "string",
+      "pattern": "^WO-[0-9]{8}-[0-9]{3}$"
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "aligned": {
+      "type": "boolean",
+      "description": "所有提问都已有可执行结论（没有 defer）时为 true"
+    },
+    "resolutions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "query_id",
+          "decision",
+          "ruling",
+          "rationale"
+        ],
+        "properties": {
+          "query_id": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "accept_codex",
+              "reject",
+              "revise",
+              "defer"
+            ]
+          },
+          "ruling": {
+            "type": "string"
+          },
+          "updated_instruction": {
+            "type": "string",
+            "description": "accept_codex 或 revise 时的新指令，取代工单原文"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "escalation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "needed",
+        "summary"
+      ],
+      "properties": {
+        "needed": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string",
+          "description": "需要用户决定什么"
+        }
+      }
+    }
+  }
+}

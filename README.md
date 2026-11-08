@@ -1,67 +1,63 @@
-# doc-video-director · 科教纪录片 AI 导演流程
+# doc-video-director · 科教纪录片 AI 导演流程（含双代理协作）
 
-一个给 **Codex** 和 **Claude Code** 用的 skill：把一份文案做成一部旁白类科教片或纪录片。
+一个给 **Claude Code** 和 **Codex** 用的 skill：把一份文案做成一部旁白类科教片或纪录片。制作流程与跨代理协作合在同一条 14 步流程里：
 
-- **GPT 图像**出风格板、分镜草图和无人脸的首尾帧
-- **本地模型（ComfyUI）**：空镜、比喻实物、缓慢运动和打样先用本地开源模型，重拍不花钱；下载前先按显存评估
-- **视频生成按成本阶梯**：通义万相、Veo、Seedance（火山方舟）、muapi 等，从最便宜的试起，过审即用；Seedance 的人脸限制另有合规做法
-- **Remotion / HyperFrames** 写代码做需要精确的科学机制动画、字卡、地图和图表
-- **TTS**（如 ElevenLabs）配音并对齐字幕
-- 四个子代理分阶段把关：**审核**（只找错）、**监督**（核对用户要求）、**用户代理**（预算内做常规决定）、**首映观众**（像第一次看的人一样复述和挑刺）
+- **总导演代理**（如 Claude Code）写文案、逐镜设计稿、难的代码动画，派工单，审查回执；
+- **执行代理**（如 Codex）生成首帧与视频、渲染幻灯片和动画、配音、剪辑、验收，指导用户下载模型和开通 key；
+- 两边通过工程里的 `.ai-collab/` 结构化文件交接（工单、回执、提问、裁决、审查、收口报告），用户在中间传一句话；也可以只用一个代理跑同一流程。
 
-核心原则：**在便宜的阶段把错误拦住**。改文案几乎免费，重画一张图占额度，重拍一段视频按秒计费，所以每进入更贵的阶段前都要过一道关。
+镜头分三类：**幻灯片**（HyperFrames）、**代码动画**（Remotion + React Three Fiber）、**现实视频**（本地 ComfyUI 模型优先，运动示范和复杂场景走云端：通义万相、Veo、Seedance、muapi，按成本阶梯）。审核、监督、用户代理、首映观众四种检查分阶段把关；用户或总导演任一方批准最新回执即可收口，执行代理写明归口方。
 
-## 致谢
-
-流程思路来自 EianLu 在 X 上发表的长文《Claude code/Codex+Seedance AI视频：从一个想法到成片的全流程》（https://x.com/EianLu/status/2118317430665613741）：导演、审核、监督、代理四角色，风格与人物设定卡，首尾帧，七段式视频提示词，成片由全新代理复审，以及经验文件。
-
-本仓库按科教纪录片的需要重新撰写和扩展，并非原文转载。主要改动：
-
-- 去掉短剧专属内容，增加镜头分流：精确的科学结构一律用代码建模，AI 视频只负责人物、生活情境、比喻实物和氛围
-- 补充 Seedance 的人脸素材规则（含 AI 生成写实人像也会被拦截）及合规做法
-- 增加预算闸门、证据核对、目标观众视角和项目设定文件 `PROJECT.md`
-- 去 AI 腔、无提示词痕迹的画面文字规则，以及重复镜头自动检测
-- 附带只用 Python 标准库的 Seedance 任务脚本：预算检查、提交、轮询、下载、记账
-
-## 安装
-
-把整个目录放到代理能读到的 skills 目录：
-
-| 代理 | 全局 | 项目内 |
-|---|---|---|
-| Codex | `~/.codex/skills/doc-video-director/` | `<项目>/.agents/skills/doc-video-director/` |
-| Claude Code | `~/.claude/skills/doc-video-director/` | `<项目>/.claude/skills/doc-video-director/` |
+## 快速开始
 
 ```bash
-git clone https://github.com/johnhowl/doc-video-director.git ~/.claude/skills/doc-video-director
+# 1. 安装 skill（任选其一）
+git clone https://github.com/johnhowl/doc-video-director.git ~/.claude/skills/doc-video-director   # Claude Code
+git clone https://github.com/johnhowl/doc-video-director.git ~/.codex/skills/doc-video-director    # Codex
+
+# 2. 在新工程根目录初始化协作区（生成 .ai-collab/、总账，并在 AGENTS.md / CLAUDE.md 追加协作说明）
+node ~/.claude/skills/doc-video-director/scripts/init-collab.mjs --root . --project "作品名" --episodes 12 --plan-dir 方案
+
+# 3. 查看进度与工单
+node .ai-collab/bin/collab.mjs status
 ```
 
-然后在项目根目录写一份 `PROJECT.md`（模板见 `references/templates.md#项目设定`），对代理说“按 doc-video-director 流程做这一集”。
+然后在方案目录写 `PROJECT.md`（模板见 `references/templates.md`），由总导演派第一张工单“熟悉协作流程”，对执行代理说“处理新工单”。
+
+## 目录
+
+```
+SKILL.md                         一条 14 步流程：角色、工单生命周期、镜头分流、关口、规矩
+references/
+  collaboration.md               双代理协作：文件约定、审查与归口、权限分级、传话口令、第一批工单样例
+  setup-checklist.md             环境与依赖：整机共用 / 每工程分界、ComfyUI 与模型、npm、云端 key、常见坑
+  animation.md                   代码动画：演示片流程、踩坑表、lemo-opuscar 风格库用法与许可
+  templates.md                   文案自查、分镜表、七段式图像/视频提示词、PROJECT.md、免责声明
+  agents.md                      审核、监督、用户代理、首映观众
+  local-comfyui.md               本地模型：何时用、按显存选型、完整安装、校验、批量调用
+  fallback-engines.md            视频引擎成本阶梯与切换条件
+  seedance.md                    Seedance 开通、价格、人脸规则、接口
+  download-manifest.example.json 模型下载清单示例（含 SHA256）
+collab-kit/                      init 复制进工程的协作模板（collab.mjs、格式定义、说明、协作 skill、测试）
+templates/remotion-3d/           三维动画起步工程（画布、灯光、材质、三个示例场景、渲染脚本）
+scripts/
+  init-collab.mjs                初始化协作区（不覆盖已有文件；--update-tools 只升级工具）
+  download-assets.ps1            按清单并行下载、断点续传、SHA256 校验（用户自己运行）
+  comfy_queue.py                 向本地 ComfyUI 批量提交工作流
+  seedance_task.py               Seedance 任务提交、轮询、下载、记账
+```
 
 ## 需要准备
 
-- Seedance：火山方舟账号、实名认证、余额与 API Key，环境变量 `ARK_API_KEY`。开通步骤见 `references/seedance.md`。
-- GPT 图像：Codex 内置 image_gen（随 ChatGPT 订阅），或 OpenAI API。
-- 可选：Node.js + Remotion / HyperFrames（机制动画与排版），ffmpeg，TTS 账号。
+基础：Node 20+、Python 3.12/3.13、Git、ffmpeg、Chrome。按需：ComfyUI（本地视频）、云端 key（通义万相 / Google / 火山方舟 / muapi）、TTS 账号。完整清单与核验方法见 `references/setup-checklist.md`。下载大模型、开通或充值账号都由用户本人操作，代理只给命令和核验。
 
-## 文件
+## 致谢
 
-```
-SKILL.md                    流程、角色、镜头分流、八个阶段与关口
-references/templates.md     文案自查表、分镜表、七段式图像/视频提示词、三维镜头说明、PROJECT.md 模板
-references/agents.md        审核、监督、用户代理、首映观众四个子代理的指令
-references/seedance.md      开通方法、模型与价格、人脸规则、接口要点、常见报错
-references/fallback-engines.md  视频引擎成本阶梯、升档与切换条件、接入要点
-references/local-comfyui.md     本地模型 + ComfyUI：何时用、按显存选型、先评估再下载、完整安装、批量调用
-scripts/seedance_task.py    Seedance 任务脚本（预算闸门 + 并发≤3 + 记账）
-scripts/comfy_queue.py      本地 ComfyUI 工作流批量提交脚本（上传首帧、覆盖参数、下载结果、记账）
-```
+- 制作流程思路来自 EianLu 的《Claude code/Codex+Seedance AI视频：从一个想法到成片的全流程》（https://x.com/EianLu/status/2118317430665613741）。
+- 协作机制改编自 AgentCollab_Template（https://github.com/johnhowl/AgentCollab_Template）。
+- 代码动画风格可参考 lemo-opuscar（https://github.com/lemomo-ai/lemo-opuscar，代码 MIT，内容 CC BY 4.0）；本仓库未复制其内容，使用其风格提示词或素材时请按其许可署名。
 
-## 提醒
-
-- 价格、模型 ID 和平台规则变化很快，开工前在火山方舟控制台核对一次。
-- 不要试图绕过人脸检测，也不要在未经本人认证的情况下使用真实人物肖像。
-- 发布时按平台要求声明 AI 生成内容。
+以上均为重新撰写和改编，并非原文转载。
 
 ## 许可
 

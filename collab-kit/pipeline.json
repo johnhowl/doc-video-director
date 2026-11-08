@@ -1,0 +1,20 @@
+{
+  "pipeline": [
+    {"id": "script", "name": "文案", "owner": "总导演", "done_when": "脚本写好，用户无修改意见（或已按意见改完）", "next": "design"},
+    {"id": "design", "name": "逐镜设计稿", "owner": "总导演", "done_when": "每镜类别、画面、文字、动画说明、视频备用提示词、评审表齐全", "next": "anim-code"},
+    {"id": "anim-code", "name": "动画代码与演示片", "owner": "总导演（难的）/ 执行（简单的）", "done_when": "所有动画镜头有代码并渲染出演示片", "next": "anim-review"},
+    {"id": "anim-review", "name": "用户审动画", "owner": "用户", "done_when": "评审表每个动画镜头都有结论：通过 / 改动画 / 改用视频生成", "next": "dispatch"},
+    {"id": "dispatch", "name": "派工单", "owner": "总导演", "done_when": "本集制作工单写好并校验通过", "next": "voice"},
+    {"id": "voice", "name": "配音", "owner": "执行（用户听样音）", "done_when": "样音经用户确认，全部配音完成并有时间戳", "next": "storyboard"},
+    {"id": "storyboard", "name": "分镜对时", "owner": "执行 → 总导演审查", "done_when": "分镜按配音对齐，每镜标类别与引擎，审查通过", "next": "assets"},
+    {"id": "assets", "name": "首帧与人物卡", "owner": "执行（用户批风格）", "done_when": "首尾帧、人物卡生成并过审，风格板已批", "next": "real-video"},
+    {"id": "real-video", "name": "现实视频生成", "owner": "执行", "done_when": "所有现实视频镜头生成并自检通过（本地优先，按规则升云端）", "next": "render"},
+    {"id": "render", "name": "幻灯片与动画渲染", "owner": "执行", "done_when": "幻灯片与动画（无标注版）全部渲染完成", "next": "edit"},
+    {"id": "edit", "name": "剪辑合成与样片", "owner": "执行（用户审样片）", "done_when": "样片经用户确认，全片合成完成", "next": "qa"},
+    {"id": "qa", "name": "验收", "owner": "执行自检 → 用户或总导演归口", "done_when": "技术验收全部通过；用户或总导演批准最新回执", "next": "delivery"},
+    {"id": "delivery", "name": "交付", "owner": "执行", "done_when": "成片、字幕、封面、章节、来源许可、发布文案齐全", "next": "publish"},
+    {"id": "publish", "name": "发布", "owner": "用户", "done_when": "用户上传平台", "next": null}
+  ],
+  "states": {"todo": "未开始", "doing": "进行中", "waiting-user": "等用户", "waiting-claude": "等总导演", "waiting-codex": "等执行",
+             "blocked": "受阻", "done": "完成", "skip": "不适用"}
+}

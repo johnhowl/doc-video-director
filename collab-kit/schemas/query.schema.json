@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "提问 / 异议（Codex → Claude）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project",
+    "work_order_id",
+    "round",
+    "overall_stance",
+    "queries"
+  ],
+  "properties": {
+    "project": {
+      "type": "string",
+      "const": "{{PROJECT}}"
+    },
+    "work_order_id": {
+      "type": "string",
+      "pattern": "^WO-[0-9]{8}-[0-9]{3}$"
+    },
+    "round": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "overall_stance": {
+      "type": "string",
+      "enum": [
+        "proceed_with_questions",
+        "blocked",
+        "dispute"
+      ]
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "refers_to",
+          "type",
+          "question",
+          "codex_position"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "refers_to": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "artifact",
+              "item_id"
+            ],
+            "properties": {
+              "artifact": {
+                "type": "string"
+              },
+              "item_id": {
+                "type": "string",
+                "description": "镜号、步骤号、验收条目，或 'whole'"
+              }
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "clarification",
+              "disagreement",
+              "blocker",
+              "proposal",
+              "science",
+              "tool-limit",
+              "budget",
+              "safety"
+            ]
+          },
+          "question": {
+            "type": "string"
+          },
+          "codex_position": {
+            "type": "string",
+            "description": "Codex 基于证据的判断"
+          },
+          "evidence": {
+            "type": "string",
+            "description": "报错、日志、抽帧路径、实测数据"
+          },
+          "proposed_resolution": {
+            "type": "string"
+          }
+        }
+      },
+      "minItems": 1
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "object", "additionalProperties": false,
+  "required": ["project", "work_order_id", "report_round", "approved_by", "approved_by_label", "approval_artifact", "approval_sha256", "report_artifact", "report_sha256", "recorded_by", "recorded_at", "summary"],
+  "properties": {
+    "project": {"type": "string", "const": "{{PROJECT}}"},
+    "work_order_id": {"type": "string", "pattern": "^WO-[0-9]{8}-[0-9]{3}$"},
+    "report_round": {"type": "integer", "minimum": 1},
+    "approved_by": {"type": "string", "enum": ["user", "Claude"]},
+    "approved_by_label": {"type": "string", "enum": ["用户", "Claude"]},
+    "approval_artifact": {"type": "string"},
+    "approval_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "report_artifact": {"type": "string"},
+    "report_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "recorded_by": {"type": "string", "const": "Codex"},
+    "recorded_at": {"type": "string"},
+    "summary": {"type": "string"}
+  }
+}

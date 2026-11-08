@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "回执（Codex → Claude）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project",
+    "work_order_id",
+    "status",
+    "summary",
+    "outputs",
+    "shots",
+    "checks",
+    "spend",
+    "deviations",
+    "open_queries",
+    "next_steps"
+  ],
+  "properties": {
+    "project": {
+      "type": "string",
+      "const": "{{PROJECT}}"
+    },
+    "work_order_id": {
+      "type": "string",
+      "pattern": "^WO-[0-9]{8}-[0-9]{3}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "done",
+        "partial",
+        "blocked",
+        "needs-user"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "description"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "duration_s": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "shots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "shot_id",
+          "engine",
+          "status"
+        ],
+        "properties": {
+          "shot_id": {
+            "type": "string"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "hyperframes",
+              "remotion",
+              "ffmpeg",
+              "comfyui-local",
+              "wan-cloud",
+              "veo",
+              "seedance",
+              "muapi",
+              "elevenlabs",
+              "gpt-image",
+              "seedream",
+              "local-image",
+              "python",
+              "node",
+              "manual-user",
+              "other"
+            ]
+          },
+          "model": {
+            "type": "string"
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "self-check-pass",
+              "needs-review",
+              "failed",
+              "rerouted",
+              "skipped"
+            ]
+          },
+          "file": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "result"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "command": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "skip"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "spend": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "engine",
+          "amount_cny"
+        ],
+        "properties": {
+          "engine": {
+            "type": "string",
+            "enum": [
+              "hyperframes",
+              "remotion",
+              "ffmpeg",
+              "comfyui-local",
+              "wan-cloud",
+              "veo",
+              "seedance",
+              "muapi",
+              "elevenlabs",
+              "gpt-image",
+              "seedream",
+              "local-image",
+              "python",
+              "node",
+              "manual-user",
+              "other"
+            ]
+          },
+          "amount_cny": {
+            "type": "number",
+            "minimum": 0
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "wall_seconds": {
+          "type": "number"
+        },
+        "gpu_peak_mib": {
+          "type": "number"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "deviations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "what",
+          "why",
+          "tier"
+        ],
+        "properties": {
+          "what": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B",
+              "C"
+            ]
+          }
+        }
+      }
+    },
+    "open_queries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "本工单下尚未裁决的提问文件名"
+    },
+    "review_material": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "供评审查看的拼图、抽帧、验收报告路径"
+    },
+    "next_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
