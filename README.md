@@ -4,7 +4,9 @@
 
 - **总导演代理**（如 Claude Code）写文案、逐镜设计稿、难的代码动画，派工单，审查回执；
 - **执行代理**（如 Codex）生成首帧与视频、渲染幻灯片和动画、配音、剪辑、验收，指导用户下载模型和开通 key；
-- 两边通过工程里的 `.ai-collab/` 结构化文件交接（工单、回执、提问、裁决、审查、收口报告），用户在中间传一句话；也可以只用一个代理跑同一流程。
+- 两边通过**你的工程里**的 `.ai-collab/` 结构化文件交接（工单、回执、提问、裁决、审查、收口报告），用户在中间传一句话；也可以只用一个代理跑同一流程。
+
+> **本仓库里没有 `.ai-collab/` 文件夹，这是正常的。** 仓库里放的是模板 `collab-kit/`；在你自己的工程根目录运行一次 `scripts/init-collab.mjs`（见下文“快速开始”第 2 步），它会把 `collab-kit/` 复制成工程里的 `.ai-collab/`，再生成总账与工单目录。之后两个代理读写的都是工程里的 `.ai-collab/`，不是本仓库。
 
 镜头分三类：**幻灯片**（HyperFrames）、**代码动画**（Remotion + React Three Fiber）、**现实视频**（本地 ComfyUI 模型优先，运动示范和复杂场景走云端：通义万相、Veo、Seedance、muapi，按成本阶梯）。审核、监督、用户代理、首映观众四种检查分阶段把关；用户或总导演任一方批准最新回执即可收口，执行代理写明归口方。
 
@@ -24,6 +26,18 @@ node .ai-collab/bin/collab.mjs status
 
 然后在方案目录写 `PROJECT.md`（模板见 `references/templates.md`），由总导演派第一张工单“熟悉协作流程”，对执行代理说“处理新工单”。
 
+## 仓库与工程的对应关系
+
+| 本仓库 | 运行 `init-collab.mjs` 后，你的工程里 |
+|---|---|
+| `collab-kit/bin/collab.mjs` | `.ai-collab/bin/collab.mjs`（status、stage、new、validate、closeout 等命令） |
+| `collab-kit/schemas/` | `.ai-collab/schemas/`（工单、回执、提问、裁决、审查、收口的格式） |
+| `collab-kit/README.md`、`prompts/`、`skills/video-collab/` | `.ai-collab/README.md` 等（项目名、方案目录已替换） |
+| `collab-kit/snippets/` | 追加到工程根目录 `AGENTS.md`（执行侧）与 `CLAUDE.md`（总导演侧）末尾的协作说明 |
+| （无） | 新生成：`.ai-collab/project.json`、`ledger.json` → `LEDGER.md`（每集 14 步总账）、`BOARD.md`（工单看板）、`work-orders/`（每张工单一个目录）、`FIXLOG.md` |
+
+已存在的文件不会被覆盖；升级协作工具用 `init-collab.mjs --update-tools`（只覆盖 `bin/` 与 `schemas/`）。
+
 ## 目录
 
 ```
@@ -38,7 +52,7 @@ references/
   fallback-engines.md            视频引擎成本阶梯与切换条件
   seedance.md                    Seedance 开通、价格、人脸规则、接口
   download-manifest.example.json 模型下载清单示例（含 SHA256）
-collab-kit/                      init 复制进工程的协作模板（collab.mjs、格式定义、说明、协作 skill、测试）
+collab-kit/                      协作区模板：init-collab.mjs 把它复制到你工程里，成为 .ai-collab/（collab.mjs、格式定义、说明、协作 skill、测试）
 templates/remotion-3d/           三维动画起步工程（画布、灯光、材质、三个示例场景、渲染脚本）
 scripts/
   init-collab.mjs                初始化协作区（不覆盖已有文件；--update-tools 只升级工具）
