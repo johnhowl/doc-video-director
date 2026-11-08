@@ -27,7 +27,7 @@
 - 先查本机是否已装：常见位置为 ComfyUI 的 `models/diffusion_models`、`models/unet`、`models/text_encoders`、`models/vae`。没有就先评估、经用户确认后再下载，只放在用户指定的模型目录，不改全局环境。
 - 16GB 显存的显卡跑 5B 级模型通常要用 fp8 或分块加载；先用一个 5 秒 720p 镜头实测耗时、显存峰值和画质，记入 PERFORMANCE。
 - 本地模型同样过审核关；画质达不到成片要求的镜头直接升到第 1 档。
-- 本地出的片段在 `tasks.jsonl` 里记 `engine: local-wan` 与模型版本；片尾 AI 生成声明按实际写。
+- 本地出的片段在 `tasks.jsonl` 里记 `engine: local-wan` 与模型版本（内部台账）；片尾只写“部分画面由 AI 生成”，不列模型名。
 
 ## 什么时候升档或换引擎
 
@@ -48,5 +48,5 @@
 
 - 用同一份七段式提示词和同一对首尾帧（按引擎要求调整格式与时长）。
 - 生成后按相邻镜头校色，分辨率统一放大到成片规格；不同引擎的帧率统一转换到成片帧率。
-- `video/tasks.jsonl` 记录 `engine`、`model`、`audio`、`resolution`、花费；片尾 AI 生成声明按实际用到的引擎写。
+- `video/tasks.jsonl` 记录 `engine`、`model`、`audio`、`resolution`、花费（内部台账，不进片尾和公开文件）；片尾只写一句“部分画面由 AI 生成”，不列引擎或助手名称（见 SKILL.md“署名”）。
 - 同一场景尽量用同一引擎，避免同一段落画风跳变。
